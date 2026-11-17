@@ -33,10 +33,10 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  // getUser valida o token no Supabase e renova a sessão quando preciso.
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // getClaims confere a assinatura do token aqui mesmo, sem ir até o Supabase a
+  // cada clique (só vai quando a sessão venceu e precisa ser renovada).
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ?? null;
 
   const path = request.nextUrl.pathname;
   const isOpen = OPEN_PREFIXES.some((p) => path === p || path.startsWith(`${p}/`));

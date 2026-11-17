@@ -62,7 +62,9 @@ export async function loadRemoteSettings() {
   const supabase = getBrowserSupabase();
   if (!supabase) return;
   set({ sync: "loading", error: null });
-  const { data: auth } = await supabase.auth.getUser();
+  // A sessão é lida do aparelho; quem garante o acesso aos dados é o banco (RLS).
+  const { data } = await supabase.auth.getSession();
+  const auth = { user: data.session?.user ?? null };
   if (!auth.user) {
     set({ sync: "idle" });
     return;
@@ -105,7 +107,8 @@ export async function updateSettings(patch: Partial<Settings>): Promise<boolean>
     return true;
   }
   set({ sync: "saving", error: null });
-  const { data: auth } = await supabase.auth.getUser();
+  const { data } = await supabase.auth.getSession();
+  const auth = { user: data.session?.user ?? null };
   if (!auth.user) {
     set({ sync: "error", error: "Sua sessão expirou. Entre de novo para salvar." });
     return false;
