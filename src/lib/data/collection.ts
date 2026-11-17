@@ -75,6 +75,22 @@ export function createCollection<T extends Row>(table: string, label: string) {
     emit({ items: (data ?? []) as T[], status: "ready", error: null });
   }
 
+  /**
+   * Sem banco, antes de gravar garante que a lista local já foi lida; senão
+   * gravar num módulo nunca aberto apagaria o que estava salvo nele.
+   */
+  function ensureLocal() {
+    if (getBrowserSupabase() || state.status === "ready") return;
+    let items: T[] = [];
+    try {
+      items = JSON.parse(localStorage.getItem(localKey) ?? "[]");
+    } catch {
+      /* dado local ilegível: começa vazio */
+    }
+    loadedAt = Date.now();
+    emit({ items, status: "ready", error: null });
+  }
+
   async function commit(
     items: T[],
     write: (db: SupabaseClient) => PromiseLike<{ error: unknown }>,
@@ -118,15 +134,18 @@ export function createCollection<T extends Row>(table: string, label: string) {
     load,
     get: () => state,
     insert(values: Omit<T, "id" | "created_at">) {
+      ensureLocal();
       const row = { ...values, id: uuid(), created_at: new Date().toISOString() } as T;
       void commit([...state.items, row], (db) => db.from(table).insert(row), "Não foi possível salvar. Nada foi criado.");
       return row;
     },
     /** Recoloca uma linha excluída (desfazer). */
     restore(row: T) {
+      ensureLocal();
       return commit([...state.items, row], (db) => db.from(table).insert(row), "Não foi possível desfazer.");
     },
     update(id: string, patch: Partial<T>) {
+      ensureLocal();
       return commit(
         state.items.map((i) => (i.id === id ? { ...i, ...patch } : i)),
         (db) => db.from(table).update(patch as never).eq("id", id),
@@ -134,6 +153,7 @@ export function createCollection<T extends Row>(table: string, label: string) {
       );
     },
     remove(id: string) {
+      ensureLocal();
       return commit(
         state.items.filter((i) => i.id !== id),
         (db) => db.from(table).delete().eq("id", id),

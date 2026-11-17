@@ -9,7 +9,8 @@ import { Notice } from "@/components/ui/Notice";
 import { Segmented } from "@/components/ui/Segmented";
 import { Switch } from "@/components/ui/Switch";
 import { isSupabaseConfigured } from "@/lib/config";
-import { updateSettings, useMounted, useSettings, type ThemeChoice } from "@/lib/settings/store";
+import { AI_SCOPES, updateSettings, useMounted, useSettings, type ThemeChoice } from "@/lib/settings/store";
+import { useAiStatus } from "@/modules/assistant/store";
 
 function NameForm({ initial }: { initial: string }) {
   const [value, setValue] = useState(initial);
@@ -54,6 +55,7 @@ const section = "surface rounded-panel p-6 sm:p-8";
 export default function SettingsPage() {
   const mounted = useMounted();
   const { settings, sync, error, email } = useSettings();
+  const ai = useAiStatus();
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
@@ -105,6 +107,39 @@ export default function SettingsPage() {
             onChange={(solid) => updateSettings({ solid })}
           />
         </div>
+      </section>
+
+      <section id="assistente" className={`${section} scroll-mt-6`} aria-labelledby="assistente-titulo">
+        <h2 id="assistente-titulo" className="mb-2 text-[19px] font-semibold">
+          Assistente de IA
+        </h2>
+        <p className="mb-5 text-ink-2">
+          {ai.state === "loading"
+            ? "Verificando a conexão com a IA…"
+            : ai.configured
+              ? `Conectado: ${ai.provider} · ${ai.model}.`
+              : "Ainda não conectado. Coloque no arquivo .env.local as linhas AI_PROVIDER (anthropic, openai ou gemini) e AI_API_KEY, e rode npm run build de novo. A chave fica só no servidor."}
+        </p>
+        <p className="mb-2 font-medium">O que o assistente pode ler</p>
+        <ul className="divide-y divide-line">
+          {AI_SCOPES.map((scope) => {
+            const on = settings.aiScopes.includes(scope.id);
+            return (
+              <li key={scope.id} className="flex items-center justify-between gap-6 py-3">
+                <span>{scope.label}</span>
+                <Switch
+                  label={scope.label}
+                  checked={on}
+                  onChange={(next) =>
+                    updateSettings({
+                      aiScopes: next ? [...settings.aiScopes, scope.id] : settings.aiScopes.filter((x) => x !== scope.id),
+                    })
+                  }
+                />
+              </li>
+            );
+          })}
+        </ul>
       </section>
 
       <section id="conta" className={`${section} scroll-mt-6`} aria-labelledby="conta-titulo">

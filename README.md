@@ -6,8 +6,9 @@ Centro de comando pessoal: rotina, projetos, conhecimento, finanças, metas e IA
 
 ## Estado atual
 
-Fases 1 e 2 concluídas: My Day, Projects, Knowledge, Finance, Growth, captura rápida (Ctrl J),
-busca global (Ctrl K) e notificações. Fase 3 (IA, Intelligence, Opportunities) pendente.
+Fases 1, 2 e 3 construídas: My Day, Projects, Knowledge, Finance, Growth, captura rápida (Ctrl J),
+busca global (Ctrl K), notificações, Opportunities, Intelligence (notícias por RSS) e Assistant
+(briefing diário por regras; resumo e conversa por IA quando a chave for configurada).
 
 ### Histórico
 
@@ -44,6 +45,21 @@ preferências guardadas só no navegador. Um aviso fica visível enquanto for as
 A chave anon é pública por desenho; quem protege os dados é o Row Level Security
 definido nas migrações. Chaves secretas (service role, API de IA) nunca vão para
 variáveis `NEXT_PUBLIC_`.
+
+## Ligar a IA
+
+O assistente funciona com Claude (Anthropic), OpenAI ou Gemini. A chave fica só no servidor.
+No `.env.local` (e na Vercel, se publicar):
+
+```
+AI_PROVIDER=anthropic        # ou openai, ou gemini
+AI_API_KEY=sua-chave
+AI_MODEL=                    # opcional; padrão claude-haiku-5-5 ou gpt-5.4-mini; obrigatório no gemini
+```
+
+Depois rode `npm run build` e `npm start` de novo. Em Configurações → Assistente de IA você escolhe
+quais módulos a IA pode ler (Finance vem desligado). A IA sugere ações (criar tarefa ou nota), mas
+nada é criado sem você clicar em Confirmar.
 
 ## Estrutura
 

@@ -118,7 +118,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Intelligence",
     summary: "Notícias e tendências com resumo",
     icon: Globe,
-    ready: false,
+    ready: true,
     phase: "Fase 3",
     planned: [
       "Notícias do Brasil e do mundo por tema",
@@ -133,7 +133,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Opportunities",
     summary: "Ideias de negócio para avaliar",
     icon: Lightbulb,
-    ready: false,
+    ready: true,
     phase: "Fase 3",
     planned: [
       "Origem da ideia e problema que resolve",
@@ -148,7 +148,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Assistant",
     summary: "IA com contexto dos seus dados",
     icon: Sparkles,
-    ready: false,
+    ready: true,
     phase: "Fase 3",
     planned: [
       "Perguntas sobre rotina, tarefas e projetos",

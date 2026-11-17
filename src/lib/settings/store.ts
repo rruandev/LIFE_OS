@@ -10,12 +10,31 @@ export type Settings = {
   solid: boolean;
   sidebar: "expanded" | "compact";
   displayName: string;
+  /** Módulos que o assistente de IA pode ler. */
+  aiScopes: AiScope[];
 };
+
+export type AiScope = "my-day" | "projects" | "knowledge" | "growth" | "finance" | "opportunities";
+export const AI_SCOPES: { id: AiScope; label: string }[] = [
+  { id: "my-day", label: "My Day: tarefas e compromissos" },
+  { id: "projects", label: "Projects" },
+  { id: "knowledge", label: "Knowledge: notas e ideias" },
+  { id: "growth", label: "Growth: metas, hábitos e estudos" },
+  { id: "finance", label: "Finance: movimentações, metas e contas" },
+  { id: "opportunities", label: "Opportunities" },
+];
 export type SyncStatus = "idle" | "loading" | "saving" | "saved" | "error";
 type Snapshot = { settings: Settings; sync: SyncStatus; error: string | null; email: string | null };
 
 export const SETTINGS_KEY = "lifeos.settings";
-const DEFAULTS: Settings = { theme: "system", solid: false, sidebar: "expanded", displayName: "" };
+const DEFAULTS: Settings = {
+  theme: "system",
+  solid: false,
+  sidebar: "expanded",
+  displayName: "",
+  // Finanças ficam de fora até a pessoa liberar.
+  aiScopes: ["my-day", "projects", "knowledge", "growth"],
+};
 const SERVER: Snapshot = { settings: DEFAULTS, sync: "idle", error: null, email: null };
 
 let snapshot: Snapshot = SERVER;
@@ -73,7 +92,7 @@ export async function loadRemoteSettings() {
     supabase.from("profiles").select("display_name").eq("id", auth.user.id).maybeSingle(),
     supabase
       .from("settings")
-      .select("theme, reduce_transparency, sidebar")
+      .select("theme, reduce_transparency, sidebar, ai_scopes")
       .eq("user_id", auth.user.id)
       .maybeSingle(),
   ]);
@@ -94,6 +113,7 @@ export async function loadRemoteSettings() {
       theme: (prefs.data?.theme as ThemeChoice) ?? snapshot.settings.theme,
       solid: prefs.data?.reduce_transparency ?? snapshot.settings.solid,
       sidebar: (prefs.data?.sidebar as Settings["sidebar"]) ?? snapshot.settings.sidebar,
+      aiScopes: (prefs.data?.ai_scopes as AiScope[] | undefined) ?? snapshot.settings.aiScopes,
     },
   });
 }
@@ -121,6 +141,7 @@ export async function updateSettings(patch: Partial<Settings>): Promise<boolean>
       theme: s.theme,
       reduce_transparency: s.solid,
       sidebar: s.sidebar,
+      ai_scopes: s.aiScopes,
     }),
   ]);
   if (profile.error || prefs.error) {

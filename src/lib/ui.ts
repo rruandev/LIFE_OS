@@ -3,7 +3,7 @@
 import { useSyncExternalStore } from "react";
 
 export type Panel = "capture" | "search" | "alerts" | null;
-export type OpenKind = "task" | "event" | "project" | "note";
+export type OpenKind = "task" | "event" | "project" | "note" | "opportunity";
 
 let panel: Panel = null;
 let request: { kind: OpenKind; id: string } | null = null;

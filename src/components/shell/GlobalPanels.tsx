@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, CalendarDays, CircleAlert, Clock, FolderKanban, Search, Sprout, SquareCheck, Wallet, type LucideIcon } from "lucide-react";
+import { BookOpen, CalendarDays, Lightbulb, CircleAlert, Clock, FolderKanban, Search, Sprout, SquareCheck, Wallet, type LucideIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Sheet } from "@/components/ui/Sheet";
@@ -11,6 +11,7 @@ import { brl, num, transactions } from "@/modules/finance/store";
 import { goals, habits } from "@/modules/growth/store";
 import { fold, notes, searchNotes } from "@/modules/knowledge/store";
 import { events, tasks } from "@/modules/my-day/store";
+import { opportunities, OPP_STATUS } from "@/modules/opportunities/store";
 import { projects } from "@/modules/projects/store";
 import { useAlerts, type Alert } from "./useAlerts";
 
@@ -61,7 +62,8 @@ function SearchBody({ onClose }: { onClose: () => void }) {
   const tr = transactions.use();
   const g = goals.use();
   const h = habits.use();
-  const loading = [t, e, p, n, tr, g, h].some((s) => s.status === "loading" || s.status === "idle");
+  const o = opportunities.use();
+  const loading = [t, e, p, n, tr, g, h, o].some((s) => s.status === "loading" || s.status === "idle");
 
   const words = fold(query).split(/\s+/).filter(Boolean);
   const match = (...parts: string[]) => {
@@ -111,6 +113,17 @@ function SearchBody({ onClose }: { onClose: () => void }) {
         href: "/finance",
       })),
     );
+    add(
+      "Oportunidades",
+      o.items.filter((x) => match(x.title, x.description, x.problem, x.origin)).map((x) => ({
+        key: x.id,
+        icon: Lightbulb,
+        title: x.title,
+        detail: OPP_STATUS[x.status],
+        href: "/opportunities",
+        open: { kind: "opportunity" as const, id: x.id },
+      })),
+    );
     add("Metas e hábitos", [
       ...g.items.filter((x) => match(x.title, x.description, x.area)).map((x) => ({ key: x.id, icon: Sprout, title: x.title, detail: "Meta", href: "/growth" })),
       ...h.items.filter((x) => match(x.name)).map((x) => ({ key: x.id, icon: Sprout, title: x.name, detail: "Hábito", href: "/growth" })),
@@ -133,7 +146,7 @@ function SearchBody({ onClose }: { onClose: () => void }) {
           value={query}
           onChange={(ev) => setQuery(ev.target.value)}
           aria-label="Buscar em tudo"
-          placeholder="Tarefas, projetos, notas, movimentações…"
+          placeholder="Tarefas, projetos, notas, oportunidades…"
           className="h-12 w-full rounded-full border border-line bg-field pl-12 pr-4 text-[16px] placeholder:text-ink-3 focus:border-ember focus:outline-none"
         />
       </div>

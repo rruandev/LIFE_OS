@@ -1,12 +1,9 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
-import Link from "next/link";
-import type { CSSProperties } from "react";
+import { HomeBriefing } from "@/components/shell/HomeBriefing";
 import { HomePanels } from "@/components/shell/HomePanels";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { isoDate, useNow } from "@/lib/dates";
-import { MODULES } from "@/lib/modules";
 import { useSettings } from "@/lib/settings/store";
 import { TodayPanel } from "@/modules/my-day/TodayPanel";
 
@@ -23,7 +20,6 @@ export default function HomePage() {
   const now = useNow();
   const { settings } = useSettings();
   const name = settings.displayName.trim();
-  const modules = MODULES.filter((m) => !m.ready);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -58,50 +54,12 @@ export default function HomePage() {
 
       {now && (
         <div className="mb-5 space-y-5">
+          <HomeBriefing today={isoDate(now)} now={now} />
           <TodayPanel today={isoDate(now)} now={now} />
           <HomePanels today={isoDate(now)} />
         </div>
       )}
 
-      <section aria-labelledby="modulos" className="glass rounded-panel p-3 sm:p-4">
-        <div className="px-3 pb-3 pt-2 sm:px-4">
-          <h2 id="modulos" className="text-[19px] font-semibold">
-            Próximas fases
-          </h2>
-          <p className="text-[14px] text-ink-2">
-            Módulos que ainda não foram construídos.
-          </p>
-        </div>
-        <ul className="grid gap-1 md:grid-cols-2">
-          {modules.map((m, i) => (
-            <li key={m.id} className="rise min-w-0" style={{ "--i": i } as CSSProperties}>
-              <Link
-                href={m.href}
-                className="press group flex min-h-[68px] items-center gap-4 rounded-item px-3 py-2 hover:bg-field sm:px-4"
-              >
-                <span
-                  className={`flex size-11 shrink-0 items-center justify-center rounded-full ${
-                    m.ready ? "bg-ember text-on-ember" : "bg-field text-ink-2"
-                  }`}
-                >
-                  <m.icon aria-hidden className="size-5" strokeWidth={1.8} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-medium">{m.label}</span>
-                  <span className="block text-[14px] leading-snug text-ink-2 sm:truncate">{m.summary}</span>
-                </span>
-                {m.ready ? (
-                  <ChevronRight aria-hidden className="size-5 text-ink-3 transition-transform group-hover:translate-x-0.5" />
-                ) : (
-                  <span className="shrink-0 rounded-full border border-line px-2.5 py-1 text-[12px] text-ink-2">
-                    {m.phase}
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }

@@ -1,8 +1,12 @@
-import { ComingModule } from "@/components/shell/ComingModule";
-import { getModule } from "@/lib/modules";
+import { FocusBoundary } from "@/components/shell/FocusBoundary";
+import { Opportunities } from "@/modules/opportunities/Opportunities";
 
-export const metadata = { title: getModule("opportunities").label };
+export const metadata = { title: "Opportunities" };
 
 export default function Page() {
-  return <ComingModule id="opportunities" />;
+  return (
+    <FocusBoundary>
+      <Opportunities />
+    </FocusBoundary>
+  );
 }
