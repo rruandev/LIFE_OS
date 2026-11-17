@@ -1,26 +1,244 @@
 @import "tailwindcss";
+@import "@fontsource-variable/onest/wght.css";
 
+/* ───────── Tokens ─────────
+   Escuro é o padrão; claro entra pelo sistema ou pela escolha manual. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --bg: #090504;
+  --ink: #fff3e8;
+  --ink-2: rgb(255 243 232 / 0.68);
+  --ink-3: rgb(255 243 232 / 0.54);
+  --ember: #ff8a2a;
+  --ember-soft: rgb(255 138 42 / 0.16);
+  --on-ember: #1b0e05;
+  --line: rgb(255 236 220 / 0.12);
+  --glass: rgb(38 22 14 / 0.46);
+  --glass-edge: rgb(255 226 200 / 0.16);
+  --glass-shine: rgb(255 240 225 / 0.14);
+  --surface: rgb(22 14 10 / 0.82);
+  --surface-solid: #17100c;
+  --field: rgb(255 240 225 / 0.07);
+  --shadow: 0 24px 60px -28px rgb(0 0 0 / 0.75);
+  --danger: #ff8f7a;
+  --ok: #8fdc9f;
+  --arc-a: rgb(255 112 16 / 0.95);
+  --arc-b: rgb(255 176 72 / 0.55);
+  --arc-opacity: 0.8;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ece8e4;
+  --ink: #1f1610;
+  --ink-2: rgb(31 22 16 / 0.7);
+  --ink-3: rgb(31 22 16 / 0.52);
+  --ember: #f07a17;
+  --ember-soft: rgb(240 122 23 / 0.16);
+  --on-ember: #1b0e05;
+  --line: rgb(31 22 16 / 0.12);
+  --glass: rgb(255 255 255 / 0.5);
+  --glass-edge: rgb(255 255 255 / 0.75);
+  --glass-shine: rgb(255 255 255 / 0.8);
+  --surface: rgb(255 255 255 / 0.84);
+  --surface-solid: #fbf9f7;
+  --field: rgb(31 22 16 / 0.05);
+  --shadow: 0 24px 60px -30px rgb(90 50 20 / 0.35);
+  --danger: #b3261e;
+  --ok: #1f7a3a;
+  --arc-a: rgb(255 132 40 / 0.75);
+  --arc-b: rgb(255 196 120 / 0.6);
+  --arc-opacity: 0.6;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --bg: #ece8e4;
+    --ink: #1f1610;
+    --ink-2: rgb(31 22 16 / 0.7);
+    --ink-3: rgb(31 22 16 / 0.52);
+    --ember: #f07a17;
+    --ember-soft: rgb(240 122 23 / 0.16);
+    --line: rgb(31 22 16 / 0.12);
+    --glass: rgb(255 255 255 / 0.5);
+    --glass-edge: rgb(255 255 255 / 0.75);
+    --glass-shine: rgb(255 255 255 / 0.8);
+    --surface: rgb(255 255 255 / 0.84);
+    --surface-solid: #fbf9f7;
+    --field: rgb(31 22 16 / 0.05);
+    --shadow: 0 24px 60px -30px rgb(90 50 20 / 0.35);
+    --danger: #b3261e;
+    --ok: #1f7a3a;
+    --arc-a: rgb(255 132 40 / 0.75);
+    --arc-b: rgb(255 196 120 / 0.6);
+    --arc-opacity: 0.6;
   }
 }
 
+@theme inline {
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-ember: var(--ember);
+  --color-ember-soft: var(--ember-soft);
+  --color-on-ember: var(--on-ember);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --color-field: var(--field);
+  --color-danger: var(--danger);
+  --color-ok: var(--ok);
+  --radius-panel: 28px;
+  --radius-item: 16px;
+}
+
+html {
+  background: var(--bg);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100dvh;
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+/* ───────── Vidro ─────────
+   .glass: navegação e destaques, deixa o fundo aparecer.
+   .surface: áreas de leitura e formulários, quase opaca. */
+.glass {
+  background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-shine), var(--shadow);
+  -webkit-backdrop-filter: blur(30px) saturate(170%);
+  backdrop-filter: blur(30px) saturate(170%);
+}
+
+.surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(40px);
+  backdrop-filter: blur(40px);
+}
+
+:root[data-solid="true"] .glass,
+:root[data-solid="true"] .surface {
+  background: var(--surface-solid);
+  border-color: var(--line);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .surface {
+    background: var(--surface-solid);
+    border-color: var(--line);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+/* ───────── Fundo: arcos de brasa ───────── */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background: var(--bg);
+  pointer-events: none;
+}
+
+.backdrop::before,
+.backdrop::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  opacity: var(--arc-opacity);
+  animation: arc-in 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.backdrop::before {
+  width: 150vmax;
+  height: 150vmax;
+  left: -78vmax;
+  top: -22vmax;
+  background: radial-gradient(
+    closest-side,
+    transparent 61%,
+    var(--arc-b) 66%,
+    var(--arc-a) 70%,
+    var(--arc-b) 74%,
+    transparent 82%
+  );
+  filter: blur(34px);
+}
+
+.backdrop::after {
+  width: 96vmax;
+  height: 96vmax;
+  left: -46vmax;
+  top: 14vmax;
+  background: radial-gradient(
+    closest-side,
+    var(--arc-b) 0%,
+    transparent 46%,
+    transparent 64%,
+    var(--arc-a) 72%,
+    transparent 84%
+  );
+  filter: blur(46px);
+  animation-delay: 0.15s;
+}
+
+:root[data-solid="true"] .backdrop::before,
+:root[data-solid="true"] .backdrop::after {
+  opacity: calc(var(--arc-opacity) * 0.45);
+}
+
+@keyframes arc-in {
+  from {
+    opacity: 0;
+    transform: scale(0.92) rotate(-6deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ───────── Barra lateral ───────── */
+:root {
+  --sidebar-w: 268px;
+}
+:root[data-sidebar="compact"] {
+  --sidebar-w: 104px;
+}
+:root[data-sidebar="compact"] .nav-label {
+  display: none;
+}
+:root[data-sidebar="compact"] .nav-row {
+  justify-content: center;
+  padding-inline: 0;
+}
+.sidebar,
+.app-main {
+  transition: width 0.28s cubic-bezier(0.3, 0.7, 0.2, 1), padding-left 0.28s cubic-bezier(0.3, 0.7, 0.2, 1);
 }

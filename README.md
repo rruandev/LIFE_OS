@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Life OS
 
-## Getting Started
+Centro de comando pessoal: rotina, projetos, conhecimento, finanças, metas e IA.
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router) · React 19 · Tailwind CSS 4 · Motion · Supabase (Postgres + Auth)
+
+## Estado atual
+
+Fase 1, passo 1 concluído:
+
+- Design system de vidro (tema claro/escuro, automático ou manual; opção de reduzir transparência)
+- Autenticação: entrar, criar conta, recuperar e redefinir senha, sair
+- Rotas protegidas em `src/proxy.ts`
+- Navegação: barra lateral recolhível no computador, barra inferior + "Mais" no celular
+- Home com saudação, data e hora
+- Configurações com nome, tema e preferências (salvas no aparelho e, com banco, na nuvem)
+
+Os demais módulos têm página própria dizendo em que fase entram. Nada é simulado.
+
+## Rodar
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sem variáveis de ambiente o app abre em **modo de pré-visualização**: sem login, com as
+preferências guardadas só no navegador. Um aviso fica visível enquanto for assim.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Ligar o banco (Supabase)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Crie um projeto em supabase.com.
+2. No SQL Editor, rode os arquivos de `supabase/migrations` em ordem.
+3. Copie `.env.example` para `.env.local` e preencha a URL e a chave anon
+   (Project Settings → API). Na Vercel, cadastre as mesmas duas variáveis.
+4. Em Authentication → URL Configuration, coloque o endereço do app em *Site URL*
+   e adicione `https://SEU-DOMINIO/auth/callback` em *Redirect URLs*.
 
-## Learn More
+A chave anon é pública por desenho; quem protege os dados é o Row Level Security
+definido nas migrações. Chaves secretas (service role, API de IA) nunca vão para
+variáveis `NEXT_PUBLIC_`.
 
-To learn more about Next.js, take a look at the following resources:
+## Estrutura
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/app/(auth)        telas e ações de autenticação
+src/app/(app)         app autenticado: Home, módulos, configurações
+src/components/ui     componentes base (Button, Field, Segmented, Switch, Notice)
+src/components/shell  navegação e moldura do app
+src/lib/modules.ts    registro dos módulos (rótulo, ícone, fase)
+src/lib/settings      preferências (aparelho + nuvem)
+src/lib/supabase      clientes de navegador e servidor
+supabase/migrations   esquema do banco, uma migração por etapa
+```
