@@ -4,11 +4,11 @@ import { Ellipsis, LogOut, Settings, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { signOut } from "@/app/(auth)/actions";
 import { isSupabaseConfigured } from "@/lib/config";
-import { MOBILE_PRIMARY, MODULES } from "@/lib/modules";
-import { isActive } from "./Sidebar";
+import { isActive, MOBILE_PRIMARY, MODULES } from "@/lib/modules";
+import { NavIndicator } from "./NavIndicator";
 
 const primary = MODULES.filter((m) => MOBILE_PRIMARY.includes(m.id));
 const rest = MODULES.filter((m) => !MOBILE_PRIMARY.includes(m.id));
@@ -16,7 +16,9 @@ const rest = MODULES.filter((m) => !MOBILE_PRIMARY.includes(m.id));
 export function BottomBar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const bar = useRef<HTMLElement>(null);
   const inRest = rest.some((m) => isActive(pathname, m.href)) || isActive(pathname, "/settings");
+  const activeKey = inRest ? "more" : (primary.find((m) => isActive(pathname, m.href))?.id ?? null);
 
   useEffect(() => {
     if (!open) return;
@@ -28,40 +30,37 @@ export function BottomBar() {
   return (
     <>
       <nav
+        ref={bar}
         aria-label="Módulos"
         className="glass fixed inset-x-3 z-30 flex items-stretch justify-between rounded-full p-1.5 lg:hidden"
         style={{ bottom: "max(12px, env(safe-area-inset-bottom))" }}
       >
+        <NavIndicator container={bar} activeKey={activeKey} axis="x" />
         {primary.map((m) => {
           const active = isActive(pathname, m.href);
           return (
             <Link
               key={m.id}
               href={m.href}
+              data-nav-key={m.id}
               aria-current={active ? "page" : undefined}
-              className={`relative flex h-14 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] ${
+              className={`press relative z-10 flex h-14 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] ${
                 active ? "font-semibold text-on-ember" : "text-ink-2"
               }`}
             >
-              {active && (
-                <motion.span
-                  layoutId="bottombar-active"
-                  className="absolute inset-0 rounded-full bg-ember"
-                  transition={{ type: "spring", stiffness: 380, damping: 32 }}
-                />
-              )}
-              <m.icon aria-hidden className="relative size-[22px]" strokeWidth={1.8} />
-              <span className="relative">{m.label}</span>
+              <m.icon aria-hidden className="size-[22px]" strokeWidth={1.8} />
+              <span>{m.label}</span>
             </Link>
           );
         })}
         <button
           type="button"
           onClick={() => setOpen(true)}
+          data-nav-key="more"
           aria-haspopup="dialog"
           aria-expanded={open}
-          className={`relative flex h-14 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] ${
-            inRest ? "bg-field font-semibold text-ink" : "text-ink-2"
+          className={`press relative z-10 flex h-14 flex-1 flex-col items-center justify-center gap-0.5 rounded-full text-[11px] ${
+            inRest ? "font-semibold text-on-ember" : "text-ink-2"
           }`}
         >
           <Ellipsis aria-hidden className="size-[22px]" strokeWidth={1.8} />
@@ -84,18 +83,26 @@ export function BottomBar() {
             <motion.div
               className="surface absolute inset-x-3 rounded-panel p-3"
               style={{ bottom: "max(12px, env(safe-area-inset-bottom))" }}
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 420, damping: 36 }}
+              initial={{ y: "110%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "110%" }}
+              transition={{ type: "spring", stiffness: 340, damping: 34 }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0, bottom: 0.7 }}
+              onDragEnd={(_, info) => {
+                // Arrastar para baixo fecha, como as folhas do iOS.
+                if (info.offset.y > 90 || info.velocity.y > 600) setOpen(false);
+              }}
             >
+              <div aria-hidden className="mx-auto mb-1 h-1 w-10 rounded-full bg-line" />
               <div className="flex items-center justify-between px-3 pb-2 pt-1">
                 <h2 className="text-[17px] font-semibold">Mais</h2>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
                   aria-label="Fechar"
-                  className="flex size-10 items-center justify-center rounded-full bg-field text-ink-2"
+                  className="press flex size-10 items-center justify-center rounded-full bg-field text-ink-2"
                 >
                   <X aria-hidden className="size-5" />
                 </button>
@@ -107,7 +114,7 @@ export function BottomBar() {
                       href={m.href}
                       onClick={() => setOpen(false)}
                       aria-current={isActive(pathname, m.href) ? "page" : undefined}
-                      className="flex min-h-14 items-center gap-3.5 rounded-item px-3 aria-[current=page]:bg-field"
+                      className="press flex min-h-14 items-center gap-3.5 rounded-item px-3 aria-[current=page]:bg-field"
                     >
                       <m.icon aria-hidden className="size-[22px] shrink-0 text-ink-2" strokeWidth={1.8} />
                       <span className="flex-1">
@@ -123,7 +130,7 @@ export function BottomBar() {
                 <Link
                   href="/settings"
                   onClick={() => setOpen(false)}
-                  className="flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-field font-medium"
+                  className="press flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-field font-medium"
                 >
                   <Settings aria-hidden className="size-5" strokeWidth={1.8} />
                   Configurações
@@ -132,7 +139,7 @@ export function BottomBar() {
                   <form action={signOut} className="flex-1">
                     <button
                       type="submit"
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-field font-medium"
+                      className="press flex h-12 w-full items-center justify-center gap-2 rounded-full bg-field font-medium"
                     >
                       <LogOut aria-hidden className="size-5" strokeWidth={1.8} />
                       Sair

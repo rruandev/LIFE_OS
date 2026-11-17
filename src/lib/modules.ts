@@ -163,3 +163,10 @@ export const getModule = (id: string) => MODULES.find((m) => m.id === id)!;
 
 /** Itens fixos na barra inferior do celular; o restante fica em "Mais". */
 export const MOBILE_PRIMARY = ["home", "my-day", "projects", "knowledge"];
+
+/** Um link está ativo quando a rota atual é ele ou está dentro dele. */
+export const isActive = (pathname: string, href: string) =>
+  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
+
+/** Ordem das telas na navegação; define para que lado a tela desliza. */
+export const NAV_ORDER = [...MODULES.map((m) => m.href), "/settings"];

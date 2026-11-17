@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { getModule } from "@/lib/modules";
 import { PreviewBanner } from "./PreviewBanner";
 
@@ -25,8 +26,8 @@ export function ComingModule({ id }: { id: string }) {
         </p>
         <h3 className="mt-6 text-[13px] font-medium text-ink-3">O que vai ter aqui</h3>
         <ul className="mt-2 divide-y divide-line">
-          {m.planned.map((item) => (
-            <li key={item} className="py-3">
+          {m.planned.map((item, i) => (
+            <li key={item} className="rise py-3" style={{ "--i": i } as CSSProperties}>
               {item}
             </li>
           ))}

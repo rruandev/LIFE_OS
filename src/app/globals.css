@@ -167,7 +167,10 @@ body {
   position: absolute;
   border-radius: 50%;
   opacity: var(--arc-opacity);
-  animation: arc-in 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  will-change: transform;
+  animation:
+    arc-in 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both,
+    arc-drift 34s ease-in-out 1.6s infinite alternate;
 }
 
 .backdrop::before {
@@ -200,7 +203,9 @@ body {
     transparent 84%
   );
   filter: blur(46px);
-  animation-delay: 0.15s;
+  animation-delay: 0.15s, 1.75s;
+  animation-duration: 1.6s, 46s;
+  animation-direction: normal, alternate-reverse;
 }
 
 :root[data-solid="true"] .backdrop::before,
@@ -215,10 +220,53 @@ body {
   }
 }
 
+/* Os arcos respiram bem devagar: movimento de fundo, quase imperceptível. */
+@keyframes arc-drift {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(9deg) scale(1.07);
+  }
+}
+
+/* ───────── Movimento ───────── */
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Resposta ao toque: o elemento afunda de leve, como no iOS. */
+.press {
+  transition-property: transform, background-color, color, filter, border-color;
+  transition-duration: 0.18s;
+  transition-timing-function: cubic-bezier(0.3, 0.7, 0.2, 1);
+}
+.press:active {
+  transform: scale(0.96);
+}
+
+/* Entrada em cascata de itens de lista. */
+.rise {
+  animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 38ms + 60ms);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.app-main {
+  overflow-x: clip;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
+    animation-iteration-count: 1 !important;
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

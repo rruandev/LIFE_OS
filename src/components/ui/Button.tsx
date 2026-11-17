@@ -26,7 +26,7 @@ export function Button({
       {...rest}
       disabled={disabled || pending}
       aria-busy={pending || undefined}
-      className={`inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-[15px] transition disabled:cursor-not-allowed disabled:opacity-55 ${styles[variant]} ${className}`}
+      className={`press inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 text-[15px] disabled:cursor-not-allowed disabled:opacity-55 ${styles[variant]} ${className}`}
     >
       {pending && (
         <span

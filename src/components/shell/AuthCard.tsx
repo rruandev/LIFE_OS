@@ -29,7 +29,7 @@ export function AuthCard({
             </Notice>
             <Link
               href="/"
-              className="inline-flex h-11 w-full items-center justify-center rounded-full bg-ember px-5 font-semibold text-on-ember transition hover:brightness-110"
+              className="press inline-flex h-11 w-full items-center justify-center rounded-full bg-ember px-5 font-semibold text-on-ember hover:brightness-110"
             >
               Abrir a pré-visualização
             </Link>

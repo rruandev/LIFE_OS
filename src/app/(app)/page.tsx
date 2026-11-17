@@ -2,7 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore, type CSSProperties } from "react";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { MODULES } from "@/lib/modules";
 import { useSettings } from "@/lib/settings/store";
@@ -76,11 +76,11 @@ export default function HomePage() {
           </p>
         </div>
         <ul className="grid gap-1 md:grid-cols-2">
-          {modules.map((m) => (
-            <li key={m.id} className="min-w-0">
+          {modules.map((m, i) => (
+            <li key={m.id} className="rise min-w-0" style={{ "--i": i } as CSSProperties}>
               <Link
                 href={m.href}
-                className="group flex min-h-[68px] items-center gap-4 rounded-item px-3 py-2 transition-colors hover:bg-field sm:px-4"
+                className="press group flex min-h-[68px] items-center gap-4 rounded-item px-3 py-2 hover:bg-field sm:px-4"
               >
                 <span
                   className={`flex size-11 shrink-0 items-center justify-center rounded-full ${
