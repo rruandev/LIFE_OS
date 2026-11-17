@@ -1,8 +1,7 @@
-import { ComingModule } from "@/components/shell/ComingModule";
-import { getModule } from "@/lib/modules";
+import { Finance } from "@/modules/finance/Finance";
 
-export const metadata = { title: getModule("finance").label };
+export const metadata = { title: "Finance" };
 
 export default function Page() {
-  return <ComingModule id="finance" />;
+  return <Finance />;
 }

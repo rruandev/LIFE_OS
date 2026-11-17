@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, PanelLeftClose, PanelLeftOpen, Settings } from "lucide-react";
+import { Bell, LogOut, PanelLeftClose, PanelLeftOpen, Plus, Search, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
@@ -8,6 +8,8 @@ import { signOut } from "@/app/(auth)/actions";
 import { isSupabaseConfigured } from "@/lib/config";
 import { isActive, MODULES } from "@/lib/modules";
 import { updateSettings, useSettings } from "@/lib/settings/store";
+import { setPanel } from "@/lib/ui";
+import { useAlerts } from "./useAlerts";
 import { BrandMark } from "./Brand";
 import { NavIndicator } from "./NavIndicator";
 
@@ -19,6 +21,7 @@ export function Sidebar() {
   const { settings } = useSettings();
   const compact = settings.sidebar === "compact";
   const aside = useRef<HTMLElement>(null);
+  const alerts = useAlerts();
 
   const onSettings = isActive(pathname, "/settings");
   const activeKey = onSettings ? "settings" : (MODULES.find((m) => isActive(pathname, m.href))?.id ?? null);
@@ -39,6 +42,28 @@ export function Sidebar() {
         <BrandMark className="size-9 shrink-0" />
         <span className="nav-label text-[17px] font-semibold tracking-tight">Life OS</span>
       </Link>
+
+      <div className="mb-3 flex flex-col gap-1">
+        <button
+          type="button"
+          onClick={() => setPanel("capture")}
+          title="Captura rápida (Ctrl J)"
+          className={`${row} bg-ember-soft font-medium text-ink hover:brightness-110`}
+        >
+          <Plus aria-hidden className="size-5 shrink-0 text-ember" strokeWidth={2.2} />
+          <span className="nav-label">Capturar</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setPanel("search")}
+          title="Buscar (Ctrl K)"
+          className={`${row} text-ink-2 hover:bg-field hover:text-ink`}
+        >
+          <Search aria-hidden className="size-5 shrink-0" strokeWidth={1.8} />
+          <span className="nav-label flex-1 text-left">Buscar</span>
+          <kbd className="nav-label rounded-md border border-line px-1.5 text-[11px] text-ink-3">Ctrl K</kbd>
+        </button>
+      </div>
 
       <nav aria-label="Módulos" className="flex flex-1 flex-col gap-1">
         {MODULES.map((m) => {
@@ -66,6 +91,22 @@ export function Sidebar() {
       </nav>
 
       <div className="mt-3 flex flex-col gap-1 border-t border-line pt-3">
+        <button
+          type="button"
+          onClick={() => setPanel("alerts")}
+          title="Notificações"
+          aria-label={`Notificações: ${alerts.length}`}
+          className={`${row} text-ink-2 hover:bg-field hover:text-ink`}
+        >
+          <span className="relative shrink-0">
+            <Bell aria-hidden className="size-5" strokeWidth={1.8} />
+            {alerts.length > 0 && <span className="absolute -right-1 -top-1 size-2.5 rounded-full bg-ember" />}
+          </span>
+          <span className="nav-label flex-1 text-left">Notificações</span>
+          {alerts.length > 0 && (
+            <span className="nav-label rounded-full bg-ember px-2 text-[12px] font-semibold tabular-nums text-on-ember">{alerts.length}</span>
+          )}
+        </button>
         <Link
           href="/settings"
           data-nav-key="settings"

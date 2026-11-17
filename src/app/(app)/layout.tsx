@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { BottomBar } from "@/components/shell/BottomBar";
+import { GlobalPanels } from "@/components/shell/GlobalPanels";
 import { SettingsSync } from "@/components/shell/SettingsSync";
 import { Sidebar } from "@/components/shell/Sidebar";
 import { Toaster } from "@/components/ui/Toaster";
@@ -12,6 +13,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <SettingsSync />
       <Reminders />
       <Toaster />
+      <GlobalPanels />
       <a
         href="#conteudo"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ember focus:px-4 focus:py-2 focus:text-on-ember"

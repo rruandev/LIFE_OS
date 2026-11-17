@@ -2,7 +2,8 @@
 
 import { ExternalLink, FolderKanban, Pin, Plus, Search, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { clearOpenRequest, peekOpenRequest } from "@/lib/ui";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { Button } from "@/components/ui/Button";
 import { Select } from "@/components/ui/Field";
@@ -37,7 +38,12 @@ export function Knowledge() {
   const [kind, setKind] = useState<KindFilter>("all");
   const [pickedCategory, setPickedCategory] = useState("");
   const [pickedTags, setPickedTags] = useState<string[]>([]);
-  const [editor, setEditor] = useState<Editor>(null);
+  const [editor, setEditor] = useState<Editor>(() => {
+    const id = peekOpenRequest("note");
+    const note = id ? noteStore.get().items.find((n) => n.id === id) : undefined;
+    return note ? { note } : null;
+  });
+  useEffect(() => clearOpenRequest("note"), []);
 
   const all = noteState.items;
   const categories = categoriesOf(all);

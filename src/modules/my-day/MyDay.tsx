@@ -2,7 +2,7 @@
 
 import { CalendarPlus, ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
@@ -22,6 +22,7 @@ import {
   timeOf,
   useNow,
 } from "@/lib/dates";
+import { clearOpenRequest, peekOpenRequest } from "@/lib/ui";
 import { EventEditor, TaskEditor } from "./editors";
 import { Check_, EventRow, TaskRow } from "./items";
 import {
@@ -50,7 +51,19 @@ export function MyDay() {
   const [view, setView] = useState<View>("day");
   const [picked, setPicked] = useState<string | null>(null);
   const [direction, setDirection] = useState(0);
-  const [editor, setEditor] = useState<Editor>(null);
+  // Vindo da busca ou de um aviso: abre direto no item pedido.
+  const [editor, setEditor] = useState<Editor>(() => {
+    const taskId = peekOpenRequest("task");
+    const task = taskId ? taskStore.get().items.find((t) => t.id === taskId) : undefined;
+    if (task) return { kind: "task", task };
+    const eventId = peekOpenRequest("event");
+    const event = eventId ? eventStore.get().items.find((e) => e.id === eventId) : undefined;
+    return event ? { kind: "event", event } : null;
+  });
+  useEffect(() => {
+    clearOpenRequest("task");
+    clearOpenRequest("event");
+  }, []);
   const taskState = taskStore.use();
   const eventState = eventStore.use();
 

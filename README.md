@@ -6,6 +6,11 @@ Centro de comando pessoal: rotina, projetos, conhecimento, finanças, metas e IA
 
 ## Estado atual
 
+Fases 1 e 2 concluídas: My Day, Projects, Knowledge, Finance, Growth, captura rápida (Ctrl J),
+busca global (Ctrl K) e notificações. Fase 3 (IA, Intelligence, Opportunities) pendente.
+
+### Histórico
+
 Fase 1, passo 1 concluído:
 
 - Design system de vidro (tema claro/escuro, automático ou manual; opção de reduzir transparência)

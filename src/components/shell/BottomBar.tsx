@@ -1,14 +1,16 @@
 "use client";
 
-import { Ellipsis, LogOut, Settings, X } from "lucide-react";
+import { Bell, Ellipsis, LogOut, Plus, Search, Settings, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { signOut } from "@/app/(auth)/actions";
 import { isSupabaseConfigured } from "@/lib/config";
 import { isActive, MOBILE_PRIMARY, MODULES } from "@/lib/modules";
+import { setPanel } from "@/lib/ui";
 import { NavIndicator } from "./NavIndicator";
+import { useAlerts } from "./useAlerts";
 
 const primary = MODULES.filter((m) => MOBILE_PRIMARY.includes(m.id));
 const rest = MODULES.filter((m) => !MOBILE_PRIMARY.includes(m.id));
@@ -17,6 +19,7 @@ export function BottomBar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const bar = useRef<HTMLElement>(null);
+  const alerts = useAlerts();
   const inRest = rest.some((m) => isActive(pathname, m.href)) || isActive(pathname, "/settings");
   const activeKey = inRest ? "more" : (primary.find((m) => isActive(pathname, m.href))?.id ?? null);
 
@@ -36,11 +39,21 @@ export function BottomBar() {
         style={{ bottom: "max(12px, env(safe-area-inset-bottom))" }}
       >
         <NavIndicator container={bar} activeKey={activeKey} axis="x" />
-        {primary.map((m) => {
+        {primary.map((m, i) => {
           const active = isActive(pathname, m.href);
           return (
+            <Fragment key={m.id}>
+            {i === 2 && (
+              <button
+                type="button"
+                onClick={() => setPanel("capture")}
+                aria-label="Captura rápida"
+                className="press relative z-10 mx-1 flex size-14 shrink-0 items-center justify-center rounded-full bg-ember text-on-ember shadow-[0_6px_20px_-6px_var(--ember)]"
+              >
+                <Plus aria-hidden className="size-6" strokeWidth={2.4} />
+              </button>
+            )}
             <Link
-              key={m.id}
               href={m.href}
               data-nav-key={m.id}
               aria-current={active ? "page" : undefined}
@@ -51,6 +64,7 @@ export function BottomBar() {
               <m.icon aria-hidden className="size-[22px]" strokeWidth={1.8} />
               <span>{m.label}</span>
             </Link>
+            </Fragment>
           );
         })}
         <button
@@ -63,7 +77,10 @@ export function BottomBar() {
             inRest ? "font-semibold text-on-ember" : "text-ink-2"
           }`}
         >
-          <Ellipsis aria-hidden className="size-[22px]" strokeWidth={1.8} />
+          <span className="relative">
+            <Ellipsis aria-hidden className="size-[22px]" strokeWidth={1.8} />
+            {alerts.length > 0 && !inRest && <span className="absolute -right-1.5 -top-0.5 size-2.5 rounded-full bg-ember" />}
+          </span>
           <span>Mais</span>
         </button>
       </nav>
@@ -107,7 +124,34 @@ export function BottomBar() {
                   <X aria-hidden className="size-5" />
                 </button>
               </div>
-              <ul>
+              <div className="mb-2 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setPanel("search");
+                  }}
+                  className="press flex h-12 items-center justify-center gap-2 rounded-full bg-field font-medium"
+                >
+                  <Search aria-hidden className="size-5" strokeWidth={1.8} />
+                  Buscar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    setPanel("alerts");
+                  }}
+                  className="press flex h-12 items-center justify-center gap-2 rounded-full bg-field font-medium"
+                >
+                  <Bell aria-hidden className="size-5" strokeWidth={1.8} />
+                  Notificações
+                  {alerts.length > 0 && (
+                    <span className="rounded-full bg-ember px-2 text-[12px] font-semibold tabular-nums text-on-ember">{alerts.length}</span>
+                  )}
+                </button>
+              </div>
+              <ul className="max-h-[46dvh] overflow-y-auto">
                 {rest.map((m) => (
                   <li key={m.id}>
                     <Link

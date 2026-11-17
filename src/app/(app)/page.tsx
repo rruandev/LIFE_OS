@@ -3,6 +3,7 @@
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { HomePanels } from "@/components/shell/HomePanels";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { isoDate, useNow } from "@/lib/dates";
 import { MODULES } from "@/lib/modules";
@@ -22,7 +23,7 @@ export default function HomePage() {
   const now = useNow();
   const { settings } = useSettings();
   const name = settings.displayName.trim();
-  const modules = MODULES.filter((m) => m.id !== "home");
+  const modules = MODULES.filter((m) => !m.ready);
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -56,18 +57,19 @@ export default function HomePage() {
       </header>
 
       {now && (
-        <div className="mb-5">
+        <div className="mb-5 space-y-5">
           <TodayPanel today={isoDate(now)} now={now} />
+          <HomePanels today={isoDate(now)} />
         </div>
       )}
 
       <section aria-labelledby="modulos" className="glass rounded-panel p-3 sm:p-4">
         <div className="px-3 pb-3 pt-2 sm:px-4">
           <h2 id="modulos" className="text-[19px] font-semibold">
-            Módulos
+            Próximas fases
           </h2>
           <p className="text-[14px] text-ink-2">
-            Projetos, metas e finanças aparecem na Home conforme cada módulo entra no ar.
+            Módulos que ainda não foram construídos.
           </p>
         </div>
         <ul className="grid gap-1 md:grid-cols-2">

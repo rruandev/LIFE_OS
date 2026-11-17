@@ -88,7 +88,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Finance",
     summary: "Entradas, despesas e metas",
     icon: Wallet,
-    ready: false,
+    ready: true,
     phase: "Fase 2",
     planned: [
       "Registro manual de entradas e despesas",
@@ -103,7 +103,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Growth",
     summary: "Metas, hábitos e estudos",
     icon: Sprout,
-    ready: false,
+    ready: true,
     phase: "Fase 2",
     planned: [
       "Metas pessoais e hábitos",
@@ -162,7 +162,8 @@ export const MODULES: ModuleInfo[] = [
 export const getModule = (id: string) => MODULES.find((m) => m.id === id)!;
 
 /** Itens fixos na barra inferior do celular; o restante fica em "Mais". */
-export const MOBILE_PRIMARY = ["home", "my-day", "projects", "knowledge"];
+export const MOBILE_PRIMARY = ["home", "my-day", "projects"];
+// A captura rápida ocupa o centro da barra, entre o segundo e o terceiro item.
 
 /** Um link está ativo quando a rota atual é ele ou está dentro dele. */
 export const isActive = (pathname: string, href: string) =>

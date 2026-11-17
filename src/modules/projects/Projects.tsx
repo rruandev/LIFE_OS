@@ -2,7 +2,8 @@
 
 import { Plus } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { clearOpenRequest, peekOpenRequest } from "@/lib/ui";
 import { PreviewBanner } from "@/components/shell/PreviewBanner";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
@@ -27,7 +28,8 @@ const EMPTY: Record<Filter, string> = {
 export function Projects() {
   const now = useNow();
   const today = now ? isoDate(now) : null;
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(() => peekOpenRequest("project"));
+  useEffect(() => clearOpenRequest("project"), []);
   const [filter, setFilter] = useState<Filter>("active");
   const [editor, setEditor] = useState<Editor>(null);
   const projectState = projectStore.use();
