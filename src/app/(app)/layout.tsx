@@ -2,12 +2,16 @@ import type { ReactNode } from "react";
 import { BottomBar } from "@/components/shell/BottomBar";
 import { SettingsSync } from "@/components/shell/SettingsSync";
 import { Sidebar } from "@/components/shell/Sidebar";
+import { Toaster } from "@/components/ui/Toaster";
+import { Reminders } from "@/modules/my-day/Reminders";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <div className="backdrop" aria-hidden />
       <SettingsSync />
+      <Reminders />
+      <Toaster />
       <a
         href="#conteudo"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-ember focus:px-4 focus:py-2 focus:text-on-ember"

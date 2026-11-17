@@ -43,7 +43,7 @@ export const MODULES: ModuleInfo[] = [
     label: "My Day",
     summary: "Agenda, tarefas, prazos e lembretes",
     icon: CalendarDays,
-    ready: false,
+    ready: true,
     phase: "Fase 1, passo 2",
     planned: [
       "Agenda por dia, semana e mês",
@@ -58,7 +58,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Projects",
     summary: "Projetos, objetivos e progresso",
     icon: FolderKanban,
-    ready: false,
+    ready: true,
     phase: "Fase 1, passo 3",
     planned: [
       "Projetos ativos, pausados e concluídos",
@@ -73,7 +73,7 @@ export const MODULES: ModuleInfo[] = [
     label: "Knowledge",
     summary: "Notas, ideias e aprendizados",
     icon: BookOpen,
-    ready: false,
+    ready: true,
     phase: "Fase 1, passo 4",
     planned: [
       "Notas com categorias e etiquetas",

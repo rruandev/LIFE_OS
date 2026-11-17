@@ -1,8 +1,7 @@
-import { ComingModule } from "@/components/shell/ComingModule";
-import { getModule } from "@/lib/modules";
+import { Knowledge } from "@/modules/knowledge/Knowledge";
 
-export const metadata = { title: getModule("knowledge").label };
+export const metadata = { title: "Knowledge" };
 
 export default function Page() {
-  return <ComingModule id="knowledge" />;
+  return <Knowledge />;
 }
