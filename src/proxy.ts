@@ -9,6 +9,15 @@ export async function proxy(request: NextRequest) {
   // Pré-visualização: sem banco não há sessão para checar.
   if (!isSupabaseConfigured) return NextResponse.next();
 
+  // Link de e-mail que caiu fora de /auth/callback (acontece quando o endereço
+  // de retorno não está liberado no Supabase): encaminha o código para lá.
+  const code = request.nextUrl.searchParams.get("code");
+  if (code && !request.nextUrl.pathname.startsWith("/auth/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/callback";
+    return NextResponse.redirect(url);
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
